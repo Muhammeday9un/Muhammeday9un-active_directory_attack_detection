@@ -1,0 +1,23 @@
+title: NTLM Certificate Requests
+id: 34567890-abcd-ef90-1234-5678abcdef90
+status: experimental
+description: >
+  Detects certificate requests that utilize the NTLM authentication package to monitor potential misuse or unauthorized access.
+
+logsource:
+  category: windows
+  product: windows
+  service: security
+
+detection:
+  selection:
+    EventID: 4769
+    AuthenticationPackageName: 'NTLM'
+  condition: selection
+
+falsepositives:
+  - Legitimate NTLM certificate requests
+
+level: high
+
+#NTLM Relay ile Sertifika Alımı Tespit Edilmesi

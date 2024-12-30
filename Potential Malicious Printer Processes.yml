@@ -1,0 +1,33 @@
+title: Potential Malicious Printer Processes
+id: 78901234-abcd-ef90-1234-5678abcdef90
+status: experimental
+description: >
+  Detects suspicious printer-related commands executed by privileged accounts, indicating potential exploitation attempts.
+
+logsource:
+  category: process_creation
+  product: windows
+
+detection:
+  selection:
+    Image|endswith: 
+      - '\spoolsv.exe'
+    CommandLine|contains|all:
+      - 'Add-PrinterDriver'
+      - 'Add-PrinterPort'
+      - 'Add-Printer'
+    # Check if the process is run with abnormal permissions
+    User|contains:
+      - 'SYSTEM'
+      - 'Administrator'
+    # Add specific command-line patterns associated with the exploit
+    CommandLine|contains|all:
+      - '-AddPrinterDriver'
+      - '-AddPrinterPort'
+      - '-AddPrinter'
+  condition: selection
+
+level: high
+
+
+#PrintNightmare (CVE-2021-34527)

@@ -1,0 +1,25 @@
+title: LDAP Query Execution
+id: 45678901-abcd-ef90-1234-5678abcdef90
+status: experimental
+description: >
+  Detects process creations that contain specific LDAP query commands, indicating potential misuse or unauthorized access.
+
+logsource:
+  category: process_creation
+  product: windows
+
+detection:
+  selection:
+    CommandLine|contains:
+      - '(&(objectClass=user))'
+      - '(|(objectClass=*)'
+      - '(!objectClass=*)'
+  condition: selection
+
+falsepositives:
+  - Legitimate software performing advanced LDAP queries in high-privileged environments
+
+level: high
+
+
+#LDAP Injection Saldırı Tespit Kuralları:

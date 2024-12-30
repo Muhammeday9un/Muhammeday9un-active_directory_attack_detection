@@ -1,0 +1,34 @@
+title: Suspicious TGT Request for krbtgt Service (Windows Security Event 4768)
+id: 35791324-abcd-ef90-1234-5678abcdef90
+status: experimental
+description: >
+  Detects TGT requests for the krbtgt service with specific TicketOptions and flags from workstations starting with DESKTOP-*. This may indicate potential misuse of TGTs or unauthorized access attempts.
+
+logsource:
+  category: kerberos
+  product: windows
+
+detection:
+  selection:
+    EventID: 4768
+    TicketOptions:
+      - '0x40800000' # Specific flags indicating TGT
+    TicketFlags:
+      - '0x40'
+    ServiceName:
+      - 'krbtgt'
+    WorkstationName:
+      - 'DESKTOP-*'
+  condition: selection
+
+falsepositives:
+  - Legitimate TGT requests from authorized applications or services on workstations
+  - Routine authentication requests from administrative tools
+
+level: high
+
+references:
+  - https://docs.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4768
+  - https://attack.mitre.org/techniques/T1558/002/
+
+#Golden Tickets Saldiri Tespit Kurali

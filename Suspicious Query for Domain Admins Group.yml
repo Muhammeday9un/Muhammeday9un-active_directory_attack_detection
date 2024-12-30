@@ -1,0 +1,30 @@
+title: Suspicious Query for Domain Admins Group (Windows Security Event 4662)
+id: 98765432-abcd-ef12-3456-7890abcdef34
+status: experimental
+description: >
+  Detects LDAP queries targeting the "Domain Admins" group, which may indicate reconnaissance or privilege escalation attempts.
+  
+logsource:
+  product: windows
+  service: security
+  category: directory_service
+
+detection:
+  selection:
+    EventID: 4662
+    ObjectClass: "group"
+    OperationType: "Query"
+    ObjectValue: "Domain Admins"
+  condition: selection
+
+falsepositives:
+  - Legitimate administrative tasks querying Domain Admins group memberships (e.g., auditing, synchronization)
+  - Routine AD maintenance tasks by authorized administrators
+
+level: high
+
+references:
+  - https://docs.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4662
+  - https://attack.mitre.org/techniques/T1087/
+
+#Bilgi Toplama Saldırısının Tespit Kuralları

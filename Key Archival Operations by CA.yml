@@ -1,0 +1,25 @@
+title: Key Archival Operations by CA
+id: 23456789-abcd-ef90-1234-5678abcdef90
+status: experimental
+description: >
+  Detects key archival operations performed by Certificate Authorities (CA) to identify potential misuse or unauthorized access.
+
+logsource:
+  category: windows
+  product: windows
+  service: security
+
+detection:
+  selection:
+    EventID: 4887
+    ObjectType: 'CA'
+    ObjectOperation: 'Key archival'
+  condition: selection
+
+falsepositives:
+  - Legitimate archival of keys
+
+level: high
+
+
+#CA’nın Geriye Dönük Anahtar Kaydetme Özelliğinin Kötüye Kullanılması Tespit Edilmesi

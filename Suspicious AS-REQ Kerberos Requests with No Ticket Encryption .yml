@@ -1,0 +1,46 @@
+title: Suspicious AS-REQ Kerberos Requests with No Ticket Encryption (Windows Security Events 4768)
+id: 13579246-abcd-ef78-9012-3456abcdef78
+status: experimental
+description: >
+  Detects multiple AS-REQ Kerberos requests within a 5-minute timeframe with no ticket encryption. This may indicate potential attacks such as pass-the-ticket or other unauthorized access attempts.
+
+logsource:
+  category: kerberos
+  product: windows
+
+detection:
+  selection:
+    EventID:
+      - 4768
+    Kerberos_Operation:
+      - AS-REQ
+    AS_Rep:
+      - True
+    Ticket_Encryption:
+      - No
+    User_Name: 
+      - '*'
+    
+  timeframe: 5m
+  count: 5
+
+  # Exclude known administrator or service accounts
+  exclusion:
+    User_Name:
+      - 'admin'
+      - 'svc_*'
+      - 'krbtgt'
+
+  condition: selection and (count > 5) and not exclusion
+
+falsepositives:
+  - Legitimate high-volume AS-REQ requests from automated scripts or applications
+  - Routine authentication requests from authorized administrative tools
+
+level: high
+
+references:
+  - https://docs.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4768
+  - https://attack.mitre.org/techniques/T1558/002/
+
+#AS-REP Roasting Saldiri Tespit Kurali

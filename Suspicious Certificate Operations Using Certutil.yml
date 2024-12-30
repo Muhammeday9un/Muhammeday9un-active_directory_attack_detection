@@ -1,0 +1,36 @@
+title: Suspicious Certificate Operations Using Certutil
+id: 01234567-abcd-ef90-1234-5678abcdef90
+status: experimental
+description: >
+  Detects potential misuse of certutil.exe for adding, deleting, or importing certificates, indicating possible malicious activity.
+
+logsource:
+  category: windows
+  product: microsoft_windows
+
+detection:
+  selection:
+    EventID: 4698
+    ProcessName: 'certutil.exe'
+    CommandLine|contains:
+      - '-addstore'
+      - '-delstore'
+      - '-importp7b'
+      - '-importcert'
+    UserName|not_in:
+      - SYSTEM
+      - TrustedInstaller
+      - Administrator
+    # Additional context to reduce false positives
+    CommandLine|contains:
+      - '.p7b'
+      - '.crt'
+      - '.cer'
+    ProcessPath|endswith:
+      - 'certutil.exe'
+  
+  condition: selection
+
+level: high
+
+#Certifried (CVE-2022-26923)

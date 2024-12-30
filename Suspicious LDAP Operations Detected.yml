@@ -1,0 +1,30 @@
+title: Suspicious LDAP Operations Detected (Windows Security Event 4662)
+id: 12345678-90ab-cdef-1234-567890abcdef
+status: experimental
+description: >
+  Detects an unusual number of LDAP operations (Event ID 4662) that could indicate potential directory service enumeration or reconnaissance activity within Active Directory.
+  
+logsource:
+  product: windows
+  service: security
+  category: directory_service
+
+detection:
+  selection:
+    EventID: 4662
+    ObjectClass: "*"
+    OperationType: "LDAP"
+  condition: selection | count(>=50) within 10m
+
+falsepositives:
+  - Administrative users conducting large numbers of legitimate queries
+  - System services or applications performing bulk LDAP queries (e.g., backup software, directory sync)
+
+level: high
+
+references:
+  - https://docs.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4662
+  - https://attack.mitre.org/techniques/T1003/
+
+
+#Bilgi Toplama Saldırısının Tespit Kuralları

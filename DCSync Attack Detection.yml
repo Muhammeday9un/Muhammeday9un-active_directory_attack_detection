@@ -1,0 +1,32 @@
+title: DCSync Attack Detection
+id: 90123456-abcd-ef90-1234-5678abcdef90
+status: experimental
+description: >
+  Detects DCSync attack attempts by monitoring for specific logon events that indicate unauthorized access to Domain Admin accounts.
+
+logsource:
+  product: windows
+  service: security
+
+detection:
+  selection:
+    EventID:
+      - 4624
+      - 4648
+      - 4672
+    LogonType:
+      - 3
+      - 10
+    NewLogon:
+      SecurityID: "S-1-5-21-*-512" # SID of Domain Admins
+    Keywords:
+      - "DCSync"
+  condition: selection
+
+falsepositives:
+  - Legitimate administrative tasks
+  - Scheduled maintenance or system updates
+
+level: high
+
+#DCSync Saldiri Tespit Kurali

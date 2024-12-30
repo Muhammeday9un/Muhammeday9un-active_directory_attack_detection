@@ -1,0 +1,34 @@
+title: Suspicious High-Privilege Ticket Request for krbtgt Service (Windows Security Event 4769)
+id: 57912348-abcd-ef90-1234-5678abcdef90
+status: experimental
+description: >
+  Detects service ticket requests for the krbtgt service with specific TicketOptions indicating high privilege tickets from workstations starting with DESKTOP-*. This may indicate potential misuse of high-privilege tickets or unauthorized access attempts.
+
+logsource:
+  category: kerberos
+  product: windows
+
+detection:
+  selection:
+    EventID: 4769
+    TicketOptions:
+      - '0x40810010' # Options specific to high privilege tickets
+    TicketFlags:
+      - '0x40'
+    ServiceName:
+      - 'krbtgt'
+    WorkstationName:
+      - 'DESKTOP-*'
+  condition: selection
+
+falsepositives:
+  - Legitimate high-privilege service ticket requests from authorized applications or scripts
+  - Routine operations from legitimate administrative tools
+
+level: high
+
+references:
+  - https://docs.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4769
+  - https://attack.mitre.org/techniques/T1558/003/
+
+#Diamond Ticket Saldiri Tespit Kurali

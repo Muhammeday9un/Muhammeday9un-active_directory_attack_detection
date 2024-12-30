@@ -1,0 +1,26 @@
+title: High Volume LDAP Queries
+id: 56789012-abcd-ef90-1234-5678abcdef90
+status: experimental
+description: >
+  Detects a high volume of LDAP queries initiated by user accounts within a short timeframe, indicating potential misuse or unauthorized access.
+
+logsource:
+  category: process_creation
+  product: windows
+
+detection:
+  timeframe: 30s
+  selection:
+    EventID: 4662
+    ObjectType|contains: 
+      - 'LDAP Query'
+    AccountType: 
+      - 'User'
+  condition: selection | count(>5)
+
+falsepositives:
+  - High activity from legitimate administrative operations or automated scripts
+
+level: high
+
+#LDAP Injection Saldırı Tespit Kuralları:

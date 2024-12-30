@@ -1,0 +1,29 @@
+title: Suspicious Group Membership Query (Windows Security Event 4662)
+id: 34567890-abcd-1234-ef56-789012abcdef
+status: experimental
+description: >
+  Detects suspicious LDAP queries for group memberships. These queries could indicate reconnaissance or preparation for privilege escalation attacks.
+  
+logsource:
+  product: windows
+  service: security
+  category: directory_service
+
+detection:
+  selection:
+    EventID: 4662
+    ObjectClass: "group"
+    OperationType: "Query"
+  condition: selection
+
+falsepositives:
+  - Administrative tasks querying group memberships
+  - Legitimate system or application queries (e.g., user synchronization or permissions audits)
+
+level: medium
+
+references:
+  - https://docs.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4662
+  - https://attack.mitre.org/techniques/T1087/ 
+
+#Bilgi Toplama Saldırısının Tespit Kuralları

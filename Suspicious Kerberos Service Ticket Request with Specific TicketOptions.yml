@@ -1,0 +1,30 @@
+title: Suspicious Kerberos Service Ticket Request with Specific TicketOptions (Windows Security Event 4769)
+id: 89012345-abcd-ef56-7890-1234abcdef56
+status: experimental
+description: >
+  Detects multiple Kerberos service ticket requests with specific TicketOptions (0x40810000) within a 5-minute timeframe. This could indicate ticket-based attacks such as Kerberoasting.
+
+logsource:
+  product: windows
+  service: kerberos
+
+detection:
+  selection:
+    EventID: 4769
+    ServiceName: "*"
+    TicketOptions: 0x40810000  # Belirli TicketOptions ile yanlis pozitifleri azalt
+  timeframe: 5m
+  condition: |
+    count(EventID) by UserName, ServiceName > 10
+
+falsepositives:
+  - Legitimate high-volume Kerberos requests from authorized applications or services
+  - Automated backup systems or scripts interacting with multiple services
+
+level: high
+
+references:
+  - https://docs.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4769
+  - https://attack.mitre.org/techniques/T1558/003/
+
+#Kerberoasting Saldiri Tespit Kurali

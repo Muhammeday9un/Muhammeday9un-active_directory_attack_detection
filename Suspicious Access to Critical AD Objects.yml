@@ -1,0 +1,32 @@
+title: Suspicious Access to Critical AD Objects (Windows Security Event 4662)
+id: 87654321-abcd-ef12-3456-7890abcdef12
+status: experimental
+description: >
+  Detects potential suspicious access to sensitive Active Directory objects like Group Policy Containers, Domain DNS, and Organizational Units. This can indicate unauthorized attempts to modify critical AD configurations.
+  
+logsource:
+  product: windows
+  service: security
+  category: directory_service
+
+detection:
+  selection:
+    EventID: 4662
+    ObjectClass:
+      - "groupPolicyContainer"
+      - "domainDNS"
+      - "organizationalUnit"
+  condition: selection
+
+falsepositives:
+  - Legitimate AD monitoring tools performing object access queries
+  - Administrative users modifying Group Policies, DNS settings, or OUs for system maintenance
+
+level: high
+
+references:
+  - https://docs.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4662
+  - https://attack.mitre.org/techniques/T1003/
+
+
+#Bilgi Toplama Saldırısının Tespit Kuralları

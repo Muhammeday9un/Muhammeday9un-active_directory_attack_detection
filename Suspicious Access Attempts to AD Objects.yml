@@ -1,0 +1,41 @@
+title: Suspicious Access Attempts to AD Objects
+id: 01234567-abcd-ef90-1234-5678abcdef90
+status: experimental
+description: >
+  Detects suspicious access attempts to sensitive Active Directory objects, focusing on restricted service access for domainDNS and nTDSDSA object types.
+
+logsource:
+  category: directory_service
+  product: windows
+
+detection:
+  selection:
+    EventID:
+      - 4673   # Attempting to access a restricted service
+      - 4662   # Access to AD object
+    ObjectType:
+      - "domainDNS"
+      - "nTDSDSA"
+    Properties:
+      - "servicePrincipalName"
+      - "dNSHostName"
+    AccessMask: "0x100"  # Access signaling sensitive replication events in AD
+  filter:
+    # IP addresses or names of trusted DCs to filter legitimate DC replications
+    SubjectUserName|not:
+      - "DC1$"
+      - "DC2$"
+    SubjectDomainName|not:
+      - "TRUSTED_DOMAIN"
+  condition: selection and not filter
+
+falsepositives:
+  - Legitimate administrative tasks
+  - Service account activities
+
+level: high
+
+
+
+
+#DCShadow Saldiri Tespit kurali

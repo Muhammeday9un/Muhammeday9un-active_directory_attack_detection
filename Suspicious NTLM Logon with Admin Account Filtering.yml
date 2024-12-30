@@ -1,0 +1,39 @@
+title: Suspicious NTLM Logon with Admin Account Filtering (Windows Security Event 4624)
+id: 56789012-abcd-ef34-5678-9012abcdef34
+status: experimental
+description: >
+  Detects NTLM logon events (LogonType 3) from non-local IP addresses while filtering out machine accounts and non-admin service accounts. This can help identify suspicious remote logons using administrative accounts.
+  
+logsource:
+  category: authentication
+  product: windows
+
+detection:
+  selection:
+    EventID: 4624
+    LogonType: 3
+    AuthenticationPackageName: "NTLM"
+    TargetOutboundDomainName: "*"
+    TargetUserName|contains: "$"    # Filter machine accounts
+    IpAddress: ["!::1", "!127.0.0.1"]  # Exclude local connections
+    
+  filter_sensitive_accounts:
+    TargetUserName|startswith: 
+      - "admin"     # Only monitor admin accounts
+    TargetUserName|startswith: 
+      - "!svc"      # Exclude service accounts
+      
+  condition: selection and not filter_sensitive_accounts
+
+falsepositives:
+  - Legitimate administrative tasks performed via NTLM
+  - Routine system or backup service operations using admin accounts
+
+level: high
+
+references:
+  - https://docs.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4624
+  - https://attack.mitre.org/techniques/T1078/
+
+
+##NTLM Relay Saldiri Tespit Kurali

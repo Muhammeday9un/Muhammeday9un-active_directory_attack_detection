@@ -1,0 +1,18 @@
+title: ZeroLogon Authentication Failures
+id: 67890123-abcd-ef90-1234-5678abcdef90
+status: experimental
+description: >
+  Detects failed Netlogon authentication attempts on Domain Controllers, indicating potential ZeroLogon attacks.
+
+logsource:
+  product: windows
+  service: system
+
+detection:
+  selection:
+    EventID: 4742   # Failed Netlogon authentication event
+    Source: Netlogon
+    ComputerName: "*DC*"  # Domain Controller specific
+    Target
+
+#ZeroLogon Saldırı Tespit Kuralı:

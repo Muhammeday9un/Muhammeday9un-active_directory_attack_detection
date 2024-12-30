@@ -1,0 +1,37 @@
+title: Suspicious File Access Attempts
+id: 89012345-abcd-ef90-1234-5678abcdef90
+status: experimental
+description: >
+  Detects unauthorized access attempts to sensitive system files (SAM, SYSTEM, SECURITY) indicating potential compromise.
+
+logsource:
+  category: file_access
+  product: windows
+
+detection:
+  selection:
+    EventID: 4663
+    ObjectName|contains:
+      - '\SAM'
+      - '\SYSTEM'
+      - '\SECURITY'
+    AccessMask:
+      - '0x2'        # Write access
+      - '0x1'        # Read access
+  filter_users:
+    TargetUserName|endswith:
+      - '$'          # Excludes system accounts (usually end with $)
+    TargetUserName|not:
+      - 'Administrator'  # Excludes access by the Administrator account
+      - 'SYSTEM'         # Excludes SYSTEM account
+      - 'LocalService'
+      - 'NetworkService'
+  filter_times:
+    # Optionally add time-based filters to exclude known maintenance hours
+    TimeGenerated:
+      - '<not during backup hours>'  # Adjust according to your environment
+  condition: selection and not filter_users
+
+level: high
+
+#HiveNightmare (CVE-2021-36934)

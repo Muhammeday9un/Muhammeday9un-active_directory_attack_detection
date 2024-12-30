@@ -1,0 +1,39 @@
+title: Suspicious Anonymous Logon Attempts from Network Connections (Windows Security Event 4624)
+id: 67890123-abcd-ef90-1234-5678abcdef90
+status: experimental
+description: >
+  Detects anonymous logon attempts from network connections with LogonType 3, specifically when the TargetOutboundUserName is "NT AUTHORITY\\ANONYMOUS LOGON". This may indicate potential unauthorized access or network reconnaissance activities.
+
+logsource:
+  category: network_connection
+  product: windows
+
+detection:
+  selection:
+    EventID: 4624
+    LogonType: 3
+    TargetOutboundUserName: "NT AUTHORITY\\ANONYMOUS LOGON"
+    TargetUserSid: "S-1-5-7"
+    TargetOutboundDomainName: NULL
+  filter:
+    # Excluding expected or legitimate anonymous logins
+    NetworkAddress|not:
+      - 192.168.1.10  # IP address of legitimate SMB servers
+      - 192.168.1.20
+      - 10.0.0.5      # Trusted network devices
+    TargetDomainName|not: 
+      - "TRUSTED_DOMAIN"  # A trusted domain
+  timeframe: 10s  # If there are many logins from the same IP or network device in a short time, it takes this into account.
+  condition: selection and not filter
+
+falsepositives:
+  - Legitimate anonymous access requests from trusted applications or services
+  - Normal operations from local network devices
+
+level: high
+
+references:
+  - https://docs.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4624
+  - https://attack.mitre.org/techniques/T1071/001/
+
+#SMB Relay Saldiri Tespit Kurali

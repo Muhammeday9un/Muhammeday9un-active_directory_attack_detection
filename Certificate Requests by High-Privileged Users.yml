@@ -1,0 +1,25 @@
+title: Certificate Requests by High-Privileged Users
+id: 12345678-abcd-ef90-1234-5678abcdef90
+status: experimental
+description: >
+  Detects certificate requests made by high-privileged users, specifically targeting Domain Admins and Enterprise Admins.
+
+logsource:
+  category: windows
+  product: windows
+  service: security
+
+detection:
+  selection:
+    EventID: 4769
+    CertificateTemplateInformation:
+      - '*Domain Admins*'
+      - '*Enterprise Admins*'
+  condition: selection
+
+falsepositives:
+  - Legitimate certificate requests by high-privileged users
+
+level: high
+
+#Administrator Yetkilerine Sahip Bir Kullanıcıya Sertifika Talep Etme Tespit Edilmesi

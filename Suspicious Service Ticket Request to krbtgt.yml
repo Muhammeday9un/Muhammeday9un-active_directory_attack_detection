@@ -1,0 +1,34 @@
+title: Suspicious Service Ticket Request to krbtgt (Windows Security Event 4769)
+id: 24680135-abcd-ef90-1234-5678abcdef90
+status: experimental
+description: >
+  Detects service ticket requests for the krbtgt service with specific TicketOptions and flags from workstations starting with DESKTOP-*. This may indicate potential misuse of service tickets or Kerberoasting attempts.
+
+logsource:
+  category: kerberos
+  product: windows
+
+detection:
+  selection:
+    EventID: 4769
+    ServiceName:
+      - 'krbtgt'
+    TicketOptions:
+      - '0x40810010' # Normal options for service tickets
+    TicketFlags:
+      - '0x40'
+    WorkstationName:
+      - 'DESKTOP-*'
+  condition: selection
+
+falsepositives:
+  - Legitimate service ticket requests from authorized applications or scripts running on workstations
+  - Routine operations from legitimate administrative tools
+
+level: high
+
+references:
+  - https://docs.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4769
+  - https://attack.mitre.org/techniques/T1558/003/
+
+#Silver Ticket Saldirsinin Tespit Kurali
